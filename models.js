@@ -18,7 +18,8 @@ flaggedDeers = claster.clasterFlag(deers, flags)
 
 */
 
-const R = 10
+const _R = 4
+const _BIGR = 11
 
 
 async function meanVector(v1, v2) {
@@ -31,8 +32,9 @@ async function distance(v1, v2) {
     return Math.sqrt(x * x + y * y)
 }
 
-
-async function searchFlags(deers) {
+// Strict Vector Centering
+async function searchFlags(deers, isSmall) {
+    let R = isSmall ? _R : _BIGR
     const isNum = (el) => {
         return typeof el === 'number'
     }
@@ -44,15 +46,15 @@ async function searchFlags(deers) {
             continue
         }
 
-        let flag = deers[i].coords;
+        let flag = {coords: deers[i].coords, speed: 0, speedVector: {x: 0, y: 0}}
         deers[i].flag = flagI
 
         for (let j = 0; j < deers.length; j++) {
-            if (isNum(deers[j].flag) || i === j || Math.floor(await distance(deers[i].coords, deers[j].coords)) > R) {
+            if (isNum(deers[j].flag) || i === j || Math.floor(await distance(deers[i].coords, deers[j].coords)) >= R) {
                 continue
             }
             deers[j].flag = flagI
-            flag = await meanVector(flag, deers[j].coords)
+            flag = {coords: await meanVector(flag.coords, deers[j].coords), speed: 0, speedVector: {x: 0, y: 0}}
         }
         await flags.push(flag)
         flagI++
