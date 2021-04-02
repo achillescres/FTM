@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DeerLocator</title>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=06a93325-ba25-47c2-8d37-70326b9357dc&lang=ru_RU" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="fav_deericon.png">
+</head>
+<body>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="index.html">
+            <img class="logo" src="deericon.png">
+            <h4>DeerLocator</h4>
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a href="instruct.html" class="navbar-item">
+                Инструкция
+            </a>
+
+            <a href="howitworks.html" class="navbar-item">
+                Принцип работы
+            </a>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    Ещё
+                </a>
+
+                <div class="navbar-dropdown">
+                    <a href="about.html" class="navbar-item">
+                        О проекте
+                    </a>
+                    <a href="mates.html" class="navbar-item">
+                        Участники
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item">
+                        Сообщить об ошибке
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="column is-primary">
+        <div style="display: flex;">
+            <div class="dot"></div>
+            <p style="margin: 6px; margin-top: 20px; margin-left: 20px">Пастбище</p>
+        </div>
+        <div style="display: flex; vertical-align: middle">
+            <div class="dot2"></div>
+            <p style="margin: 6px; margin-top: 10px; margin-left: 20px">Стадо</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

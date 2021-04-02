@@ -7,8 +7,32 @@ body{
     max-height: 4em!important;
     margin-right: 10px
 }
-.navbar {
-
+.dot {
+    height: 50px;
+    width: 50px;
+    background-color: lightcoral;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.dot2 {
+    height: 50px;
+    width: 50px;
+    background-color: dodgerblue;
+    border-radius: 50%;
+    margin-bottom: 30px;
+}
+.ava {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.column {
+    display: block;
+}
+.block-mate {
+    width: 15%;
 }
 .ymaps-2-1-78-map-copyrights-promo {
     display:none

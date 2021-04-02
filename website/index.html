@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
+    <link rel="icon" href="fav_deericon.png">
 </head>
 <body>
 <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -27,11 +27,11 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item">
-                Проблема
+            <a href="instruct.html" class="navbar-item">
+                Инструкция
             </a>
 
-            <a class="navbar-item">
+            <a href="howitworks.html" class="navbar-item">
                 Принцип работы
             </a>
 
@@ -44,11 +44,8 @@
                     <a href="about.html" class="navbar-item">
                         О проекте
                     </a>
-                    <a class="navbar-item">
+                    <a href="mates.html" class="navbar-item">
                         Участники
-                    </a>
-                    <a class="navbar-item">
-                        Контакты
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item">
@@ -59,8 +56,6 @@
         </div>
     </div>
 </nav>
-
-<h1></h1>
 <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
 
 <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
@@ -90,8 +85,6 @@
 <script src="all.js"></script>
 <script type="text/javascript">
 
-
-
     // Функция ymaps.ready() будет вызвана, когда
     // загрузятся все компоненты API, а также когда будет готово DOM-дерево.
     var deer;
@@ -100,60 +93,116 @@
     async function init(){
         // Создание карты.
         let myMap = new ymaps.Map("map", {
-            // Координаты центра карты.
-            // Порядок по умолчанию: «широта, долгота».
-            // Чтобы не определять координаты центра карты вручную,
-            // воспользуйтесь инструментом Определение координат.
             center: [60.817386, 126.576606],
-            // Уровень масштабирования. Допустимые значения:
-            // от 0 (весь мир) до 19.
             zoom: 4,
             controls: ['zoomControl', 'typeSelector']
         });
         let placeMarks = []
         let stadoMarks = []
+        let pasturesMarks = []
+
         deer = await database.ref("deers").once("value", data => data.val())
         deer = Object.entries(deer.val());
+
         deer.forEach(([key, value]) => {
-            placeMarks.push([value.x, value.y])
+            placeMarks.push([value.coords.y/1000,value.coords.x/1000])
         })
         stado = await database.ref("flags").once("value", data => data.val())
         stado = Object.entries(stado.val());
         stado.forEach(([key, value]) => {
-             stadoMarks.push([value.x, value.y])
+             stadoMarks.push([value.coords.y/1000, value.coords.x/1000])
+        })
+        pasture = await database.ref("pastures").once("value", data => data.val())
+        pasture = Object.entries(pasture.val());
+        pasture.forEach(([key, value]) => {
+            pasturesMarks.push([value.coords.y, value.coords.x])
         })
 
-        console.log(placeMarks)
-        //let test = database.ref('deer'+i).once("value").val()
-        //console.log(test)
-        // deersCollection = new ymaps.GeoObjectCollection({}, {
-        //     preset: 'twirl#redIcon'
-        // });
+        //DeersCollection of every deer's mark
         var deersCollection = new ymaps.GeoObjectCollection();
         for(let i=0;i<placeMarks.length;i++){
 
-            deersCollection.add(new ymaps.Placemark(placeMarks[i],{},{
+            deersCollection.add(new ymaps.Placemark(placeMarks[i],{
+                hintContent: 'Олень',
+                balloonContent: placeMarks[i]
+            },{
                 iconLayout: 'default#image',
-                iconImageHref: './deer.png',
-                iconImageSize: [50, 40]
+                iconImageHref: './deer1.png',
+                iconImageSize: [40, 40]
             }));
         }
         deersCollection.options.set('visible',true);
-        deersCollection.events.add('click', function() {
-            if(deersCollection.options.get('visible')==true){
-                deersCollection.options.set('visible',false);
-            }
-            else{
-                deersCollection.options.set('visible',true);
-            }
-        });
+        console.log(placeMarks[0])
+        //Circles collection
+        var CirclesCollection = new ymaps.GeoObjectCollection();
+        for(let i=0;i<stadoMarks.length;i++){
+            CirclesCollection.add(new ymaps.GeoObject({
+                geometry: {
+                    type: "Circle",
+                    coordinates: stadoMarks[i],
+                    radius: 500
+                },
+                properties: {
+                    hintContent: "Стадо"
+                }
+            }));
+        }
+
+        CirclesCollection.options.set('visible',true);
+        CirclesCollection.options.set('opacity',0.4);
+        //PasturesCollections
+        var PasturesCollection = new ymaps.GeoObjectCollection();
+        for(let i=0;i<stadoMarks.length;i++){
+            PasturesCollection.add(new ymaps.GeoObject({
+                geometry: {
+                    type: "Circle",
+                    coordinates: pasturesMarks[i],
+                    radius: 16000
+                },
+                properties: {
+                    hintContent: "Пастбище"
+                }
+            }));
+        }
+        console.log(PasturesCollection)
+        PasturesCollection.options.set('fillColor',"FA5858");
+        PasturesCollection.options.set('strokeColor',"DF0101");
+        PasturesCollection.options.set('opacity',0.5);
+        PasturesCollection.options.set('visible',true);
+
+
+        //Add collections
         myMap.geoObjects.add(deersCollection);
+        myMap.geoObjects.add(CirclesCollection);
+        myMap.geoObjects.add(PasturesCollection);
 
 
         var showDeers =
             new ymaps.control.Button({
                 data: {
                     image: "deer20xSmaller.png"
+                },
+                options: {
+                    layout: 'round#buttonLayout',
+                    maxWidth: 40,
+                }
+            });
+        var showStado =
+            new ymaps.control.Button({
+                data: {
+                    image: "circle.png"
+
+                },
+                options: {
+                    layout: 'round#buttonLayout',
+                    maxWidth: 40,
+
+                }
+            });
+        var showPasture =
+            new ymaps.control.Button({
+                data: {
+                    image: "circle1.png"
 
                 },
                 options: {
@@ -174,25 +223,46 @@
                     }
                 }
             );
+        showStado.events
+            .add(
+                'press',
+                function () {
+                    if(CirclesCollection.options.get('visible')==true){
+                        CirclesCollection.options.set('visible',false);
+                    }
+                    else{
+                        CirclesCollection.options.set('visible',true);
+                    }
+                }
+            );
+        showPasture.events
+            .add(
+                'press',
+                function () {
+                    if(PasturesCollection.options.get('visible')==true){
+                        PasturesCollection.options.set('visible',false);
+                    }
+                    else{
+                        PasturesCollection.options.set('visible',true);
+                    }
+                }
+            );
+        myMap.controls.add(showPasture, {
+            float: "left"
+        });
+        myMap.controls.add(showStado, {
+            float: "left"
+        });
         myMap.controls.add(showDeers, {
             float: "left"
         });
+
         //console.log(deersCollection)
         //myMap.geoObjects.add(deersCollection);
         // DeersCollection.getMap().events.add('click', function() {
         //     DeersCollection.removeAll();
         // });
-        for(let i=0;i<stadoMarks.length;i++){
-            myMap.geoObjects.add(new ymaps.GeoObject({
-                geometry: {
-                    type: "Circle",
-                    coordinates: stadoMarks[i],
-                    radius: 10000
-                }
-            }));
-//Добавляем круг на карту.
 
-        }
 
     }
 </script>
